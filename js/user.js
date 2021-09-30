@@ -107,12 +107,14 @@ function saveUserCredentialsInLocalStorage() {
  * - generate the user profile part of the page
  */
 
-function updateUIOnUserLogin() {
+async function updateUIOnUserLogin() {
   console.debug("updateUIOnUserLogin");
 
+  putStoriesOnPage();
   $allStoriesList.show();
 
   updateNavOnLogin();
+  createUserProfile();
 }
 
 function createUserProfile() {

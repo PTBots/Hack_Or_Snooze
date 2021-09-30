@@ -19,7 +19,7 @@ async function getAndShowStoriesOnStart() {
  * Returns the markup for the story.
  */
 
-function generateStoryMarkup(story, showDeleteBtn = false) {
+function generateStoryMarkup(story, showDeleteBtn) {
   // console.debug("generateStoryMarkup", story);
 
   const host = story.getHostName();
@@ -28,7 +28,7 @@ function generateStoryMarkup(story, showDeleteBtn = false) {
 
   return $(`
       <li id="${story.storyId}">
-        ${showDeleteBtn ? delBtn() : ""}
+        ${showDeleteBtn ? deleteBtn() : ""}
         ${showStar ? addRemoveStar(story, currentUser) : ""}
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
@@ -40,10 +40,10 @@ function generateStoryMarkup(story, showDeleteBtn = false) {
     `);
 }
 
-function delBtn() {
+function deleteBtn() {
   return 
     `<span class="delete">
-    <i class="far fa-trash" aria-hidden="true"></i>
+      <i class="far fa-trash" aria-hidden="true"></i>
     </span>`;
 }
 
