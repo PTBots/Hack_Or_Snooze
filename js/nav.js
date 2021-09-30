@@ -53,17 +53,23 @@ function navUploadStory(e) {
   hidePageComponents();
   $allStoriesList.show();
   $submitForm.show();
+  putStoriesOnPage();
 }
 
-$navUploadStory.on("click", navUploadStory)
+$navUploadStory.on("click", navUploadStory);
 
 //click to make story a favorite
 
 function navFavClick(e) {
   console.debug("navFavClick", e);
   hidePageComponents();
-  putFavoritesOnPage()
+  putFavoritesOnPage();
 }
 
 $body.on("click", "#nav-favorites", navFavClick);
 
+function navProfile(e) {
+  hidePageComponents();
+  $("#user-profile").show();
+}
+$body.on("click", "#nav-user-profile", navProfile);

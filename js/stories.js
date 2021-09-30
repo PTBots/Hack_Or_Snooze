@@ -19,13 +19,12 @@ async function getAndShowStoriesOnStart() {
  * Returns the markup for the story.
  */
 
-function generateStoryMarkup(story, showDeleteBtn) {
+function generateStoryMarkup(story, showDeleteBtn = false) {
   // console.debug("generateStoryMarkup", story);
 
   const host = story.getHostName();
 
   const showStar = Boolean(currentUser);
-
   return $(`
       <li id="${story.storyId}">
         ${showDeleteBtn ? deleteBtn() : ""}
@@ -41,19 +40,18 @@ function generateStoryMarkup(story, showDeleteBtn) {
 }
 
 function deleteBtn() {
-  return 
-    `<span class="delete">
-      <i class="far fa-trash" aria-hidden="true"></i>
+  return `<span class="delete">
+      <i class="fas fa-trash" aria-hidden="true"></i>
     </span>`;
 }
 
 //select/deselect favorite stories
 
-function addRemoveStar(story,user){
+function addRemoveStar(story, user) {
   const isFavorite = user.isFavorite(story);
   const star = isFavorite ? "fas" : "far";
   return `<span class="star">
-            <i class="${star} fa-star"</i>
+            <i class="${star} fa-star"></i>
           </span>`;
 }
 
@@ -82,9 +80,13 @@ async function deleteStory(e) {
   const storyId = $closestLi.attr("id");
 
   await storyList.removeStory(currentUser, storyId);
+  e.target.closest("li").remove();
 
+  if (currentUser.myStories.length === 0) {
+    $myStories.append("<h4>No user stories yet!</h4>");
+  }
   //repopulate the stories list
-  await putUserStoriesOnPage
+  await putUserStoriesOnPage;
 }
 
 $myStories.on("click", ".delete", deleteStory);
@@ -100,7 +102,7 @@ async function addStory(e) {
   const title = $("#title").val();
   const url = $("#url").val();
   const username = currentUser.username;
-  const storyInfo = {title, url, author, username};
+  const storyInfo = { title, url, author, username };
 
   const story = await storyList.addStory(currentUser, storyInfo);
 
@@ -140,10 +142,11 @@ async function toggleFavoriteStories(e) {
   const $target = $(e.target);
   const $closestLi = $target.closest("li");
   const storyId = $closestLi.attr("id");
-  const story = storyList.stories.find(s => s.storyId === storyId);
+  const story = storyList.stories.find((s) => s.storyId === storyId);
 
   if ($target.hasClass("fas")) {
     await currentUser.removeFavorite(story);
+    e.target.closest("li").remove();
     $target.closest("i").toggleClass("fas far");
   } else {
     await currentUser.addFavorite(story);
@@ -152,19 +155,18 @@ async function toggleFavoriteStories(e) {
 }
 
 $storiesLists.on("click", ".star", toggleFavoriteStories);
-
 //put user stories on page
 
 function putUserStoriesOnPage() {
   console.debug("putUserStoriesOnPage");
-  
+
   $myStories.empty();
 
   if (currentUser.myStories.length === 0) {
     $myStories.append("<h4>No user stories yet!</h4>");
   } else {
     for (let story of currentUser.myStories) {
-      let $story = generateStoryMarkup(story);
+      let $story = generateStoryMarkup(story, true);
       $myStories.append($story);
     }
   }
